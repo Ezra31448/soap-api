@@ -1,0 +1,291 @@
+{
+    "info": {
+        "_postman_id": "d629a97c-993e-4c1c-94c8-023ec0d78909",
+        "name": "SOAP API - Customer Service with Authentication",
+        "description": "Postman collection for the Customer Management SOAP API with JWT Authentication.\n\nIMPORTANT: All customer endpoints now require authentication. You must:\n1. Register a user (Auth > Register User)\n2. Login to get a JWT token (Auth > Login User)\n3. Copy the token from the login response\n4. Use the token in the Authorization header for all customer requests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:register>\n         <soap:username>testuser</soap:username>\n         <soap:password>testpass123</soap:password>\n      </soap:register>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:login>\n         <soap:username>testuser</soap:username>\n         <soap:password>testpass123</soap:password>\n      </soap:login>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Verify Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:verify_token>\n         <soap:token>YOUR_JWT_TOKEN_HERE</soap:token>\n      </soap:verify_token>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Customer Operations (Requires Auth)",
+            "item": [
+                {
+                    "name": "Create Customer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text",
+                                "description": "JWT token from login. Replace {{jwt_token}} with actual token or create a Postman variable."
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:create_customer>\n         <soap:full_name>John Doe</soap:full_name>\n         <soap:email>john.doe@example.com</soap:email>\n         <soap:phone_number>1234567890</soap:phone_number>\n      </soap:create_customer>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Customer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:get_customer>\n         <soap:customer_id>1</soap:customer_id>\n      </soap:get_customer>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Customer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:update_customer>\n         <soap:customer_id>1</soap:customer_id>\n         <soap:full_name>John Updated</soap:full_name>\n         <soap:email>john.updated@example.com</soap:email>\n         <soap:phone_number>0987654321</soap:phone_number>\n         <soap:status>INACTIVE</soap:status>\n      </soap:update_customer>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Customer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:delete_customer>\n         <soap:customer_id>1</soap:customer_id>\n      </soap:delete_customer>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Customers",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "text/xml",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"spyne.examples.hello.soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <soap:get_all_customers></soap:get_all_customers>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                            "options": {
+                                "raw": {
+                                    "language": "xml"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}",
+                            "host": [
+                                "{{base_url}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/soap",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string",
+            "description": "Paste your JWT token here after logging in"
+        }
+    ]
+}

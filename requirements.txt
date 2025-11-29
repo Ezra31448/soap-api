@@ -1,0 +1,8 @@
+Flask==3.0.0
+spyne==2.14.0
+lxml==4.9.3
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.23
+Werkzeug==3.0.1
+PyJWT==2.8.0
+bcrypt==4.1.2
