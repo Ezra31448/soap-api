@@ -4,52 +4,16 @@ Authentication module for SOAP API
 import os
 import jwt
 import bcrypt
-import uuid
 from datetime import datetime, timedelta
-from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import func
 
-from model import Base
+from model import Base, User, TokenBlacklist
 
 # JWT Configuration
 JWT_SECRET = os.getenv('JWT_SECRET', 'your-secret-key-change-in-production')
 JWT_ALGORITHM = 'HS256'
 JWT_EXPIRATION_HOURS = 24
-
-class User(Base):
-    __tablename__ = 'users'
-    
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username = Column(String(100), nullable=False, unique=True)
-    email = Column(String(255), nullable=False, unique=True)
-    password_hash = Column(String(255), nullable=False)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    
-    # Relationship with wallet
-    wallet = relationship("Wallet", back_populates="user", uselist=False)
-    
-    def __repr__(self):
-        return f"<User(id='{self.id}', username='{self.username}', email='{self.email}')>"
-
-class TokenBlacklist(Base):
-    __tablename__ = 'token_blacklist'
-    
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    token = Column(String(500), nullable=False, unique=True)
-    expires_at = Column(DateTime(timezone=True), nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
-    def __repr__(self):
-        return f"<TokenBlacklist(id='{self.id}', token='{token[:20]}...')>"
-
-# Add relationship to Wallet model
-from model import Wallet
-Wallet.user_id = Column(String(36), ForeignKey('users.id'), nullable=True)
-Wallet.user = relationship("User", back_populates="wallet")
 
 class AuthService:
     def __init__(self, db_session):
