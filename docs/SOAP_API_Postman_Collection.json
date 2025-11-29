@@ -1,0 +1,1024 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "SOAP API - User Management System",
+		"description": "Complete Postman collection for testing the Enhanced User Management System SOAP API. This collection includes all endpoints with examples for Robot Framework testing and training.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Register User",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains success field\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    pm.expect(responseJson['soap:Envelope']['soap:Body']['RegisterUserResponse']['success']).to.exist;",
+									"});",
+									"",
+									"pm.test(\"User registered successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['RegisterUserResponse']['success'];",
+									"    if (success === 'true' || success === true) {",
+									"        // Store user ID and email for later tests",
+									"        var userId = responseJson['soap:Envelope']['soap:Body']['RegisterUserResponse']['userId'];",
+									"        var email = responseJson['soap:Envelope']['soap:Body']['RegisterUserResponse']['email'];",
+									"        pm.collectionVariables.set('registeredUserId', userId);",
+									"        pm.collectionVariables.set('registeredEmail', email);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/RegisterUser"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:RegisterUserRequest>\n            <tns:email>{{randomEmail}}</tns:email>\n            <tns:password>SecurePass123!</tns:password>\n            <tns:firstName>Test</tns:firstName>\n            <tns:lastName>User</tns:lastName>\n            <tns:phoneNumber>1234567890</tns:phoneNumber>\n        </tns:RegisterUserRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Authenticate User",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Authentication successful\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['AuthenticateUserResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"Token received\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var token = responseJson['soap:Envelope']['soap:Body']['AuthenticateUserResponse']['token'];",
+									"    pm.expect(token).to.be.a('string');",
+									"    pm.expect(token).to.not.be.empty;",
+									"    // Store token for later tests",
+									"    pm.collectionVariables.set('authToken', token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/AuthenticateUser"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:AuthenticateUserRequest>\n            <tns:email>{{testEmail}}</tns:email>\n            <tns:password>SecurePass123!</tns:password>\n        </tns:AuthenticateUserRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Logout User",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Logout successful\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['LogoutUserResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/LogoutUser"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:LogoutUserRequest>\n            <tns:token>{{authToken}}</tns:token>\n        </tns:LogoutUserRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and logout."
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Get User Profile",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Profile retrieved successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['GetUserProfileResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"User data present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var user = responseJson['soap:Envelope']['soap:Body']['GetUserProfileResponse']['user'];",
+									"    pm.expect(user).to.exist;",
+									"    pm.expect(user.id).to.exist;",
+									"    pm.expect(user.email).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/GetUserProfile"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:GetUserProfileRequest>\n            <tns:token>{{authToken}}</tns:token>\n        </tns:GetUserProfileRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Update User Profile",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Profile updated successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['UpdateUserProfileResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/UpdateUserProfile"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:UpdateUserProfileRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:firstName>Updated</tns:firstName>\n            <tns:lastName>Name</tns:lastName>\n            <tns:phoneNumber>9876543210</tns:phoneNumber>\n        </tns:UpdateUserProfileRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Get All Users",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Users retrieved successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['GetAllUsersResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"Users array present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var users = responseJson['soap:Envelope']['soap:Body']['GetAllUsersResponse']['users'];",
+									"    pm.expect(users).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/GetAllUsers"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:GetAllUsersRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:page>1</tns:page>\n            <tns:pageSize>10</tns:pageSize>\n        </tns:GetAllUsersRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Deactivate User",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"User deactivated successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['DeactivateUserResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/DeactivateUser"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:DeactivateUserRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:userId>{{targetUserId}}</tns:userId>\n        </tns:DeactivateUserRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints for profile operations and user administration."
+		},
+		{
+			"name": "Role Management",
+			"item": [
+				{
+					"name": "Create Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Create Role",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Role created successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['CreateRoleResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"Role data present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var role = responseJson['soap:Envelope']['soap:Body']['CreateRoleResponse']['role'];",
+									"    pm.expect(role).to.exist;",
+									"    pm.expect(role.id).to.exist;",
+									"    pm.expect(role.name).to.exist;",
+									"    // Store role ID for later tests",
+									"    pm.collectionVariables.set('createdRoleId', role.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/CreateRole"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:CreateRoleRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:name>TEST_ROLE</tns:name>\n            <tns:description>Test role for API testing</tns:description>\n        </tns:CreateRoleRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Assign Role",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Role assigned successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['AssignRoleResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/AssignRole"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:AssignRoleRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:userId>{{targetUserId}}</tns:userId>\n            <tns:roleId>{{createdRoleId}}</tns:roleId>\n        </tns:AssignRoleRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Get User Roles",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"User roles retrieved successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['GetUserRolesResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"Roles array present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var roles = responseJson['soap:Envelope']['soap:Body']['GetUserRolesResponse']['roles'];",
+									"    pm.expect(roles).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/GetUserRoles"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:GetUserRolesRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:userId>{{targetUserId}}</tns:userId>\n        </tns:GetUserRolesRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Role management endpoints for creating and assigning roles."
+		},
+		{
+			"name": "Permission Management",
+			"item": [
+				{
+					"name": "Create Permission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Create Permission",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Permission created successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['CreatePermissionResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"Permission data present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var permission = responseJson['soap:Envelope']['soap:Body']['CreatePermissionResponse']['permission'];",
+									"    pm.expect(permission).to.exist;",
+									"    pm.expect(permission.id).to.exist;",
+									"    pm.expect(permission.name).to.exist;",
+									"    // Store permission ID for later tests",
+									"    pm.collectionVariables.set('createdPermissionId', permission.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/CreatePermission"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:CreatePermissionRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:name>TEST_PERMISSION</tns:name>\n            <tns:description>Test permission for API testing</tns:description>\n            <tns:module>USER</tns:module>\n            <tns:action>TEST</tns:action>\n        </tns:CreatePermissionRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Permission to Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Assign Permission to Role",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Permission assigned successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['AssignPermissionToRoleResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/AssignPermissionToRole"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:AssignPermissionToRoleRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:roleId>{{createdRoleId}}</tns:roleId>\n            <tns:permissionId>{{createdPermissionId}}</tns:permissionId>\n        </tns:AssignPermissionToRoleRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Permission management endpoints for creating and assigning permissions."
+		},
+		{
+			"name": "Password Management",
+			"item": [
+				{
+					"name": "Request Password Reset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Request Password Reset",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Password reset requested successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['RequestPasswordResetResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/RequestPasswordReset"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:RequestPasswordResetRequest>\n            <tns:email>{{testEmail}}</tns:email>\n        </tns:RequestPasswordResetRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Reset Password",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Password reset successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['ResetPasswordResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/ResetPassword"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:ResetPasswordRequest>\n            <tns:resetToken>{{resetToken}}</tns:resetToken>\n            <tns:newPassword>NewSecurePass456!</tns:newPassword>\n        </tns:ResetPasswordRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Change Password",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Password changed successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['ChangePasswordResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/ChangePassword"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:ChangePasswordRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:currentPassword>SecurePass123!</tns:currentPassword>\n            <tns:newPassword>NewSecurePass456!</tns:newPassword>\n        </tns:ChangePasswordRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Password management endpoints for reset and change operations."
+		},
+		{
+			"name": "Audit Logs",
+			"item": [
+				{
+					"name": "Get Audit Logs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Get Audit Logs",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Audit logs retrieved successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['GetAuditLogsResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"Audit logs array present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var auditLogs = responseJson['soap:Envelope']['soap:Body']['GetAuditLogsResponse']['auditLogs'];",
+									"    pm.expect(auditLogs).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/GetAuditLogs"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:GetAuditLogsRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:page>1</tns:page>\n            <tns:pageSize>10</tns:pageSize>\n        </tns:GetAuditLogsRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Audit Logs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test script for Get User Audit Logs",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"User audit logs retrieved successfully\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var success = responseJson['soap:Envelope']['soap:Body']['GetUserAuditLogsResponse']['success'];",
+									"    pm.expect(success).to.eql('true');",
+									"});",
+									"",
+									"pm.test(\"User audit logs array present\", function () {",
+									"    var responseJson = xml2Json(pm.response.text());",
+									"    var auditLogs = responseJson['soap:Envelope']['soap:Body']['GetUserAuditLogsResponse']['auditLogs'];",
+									"    pm.expect(auditLogs).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://example.com/usermanagement/GetUserAuditLogs"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\n               xmlns:tns=\"http://example.com/usermanagement\">\n    <soap:Header/>\n    <soap:Body>\n        <tns:GetUserAuditLogsRequest>\n            <tns:token>{{authToken}}</tns:token>\n            <tns:userId>{{targetUserId}}</tns:userId>\n            <tns:page>1</tns:page>\n            <tns:pageSize>10</tns:pageSize>\n        </tns:GetUserAuditLogsRequest>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/soap",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"soap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Audit log endpoints for retrieving system and user activity logs."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script to generate random email for registration",
+					"if (!pm.collectionVariables.get('randomEmail')) {",
+					"    const timestamp = new Date().getTime();",
+					"    const randomEmail = `testuser${timestamp}@example.com`;",
+					"    pm.collectionVariables.set('randomEmail', randomEmail);",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script for error handling",
+					"if (pm.response.code >= 400) {",
+					"    pm.test(\"Error response contains fault details\", function () {",
+					"        var responseJson = xml2Json(pm.response.text());",
+					"        var fault = responseJson['soap:Envelope']['soap:Body']['soap:Fault'];",
+					"        pm.expect(fault).to.exist;",
+					"        pm.expect(fault.faultcode).to.exist;",
+					"        pm.expect(fault.faultstring).to.exist;",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "testEmail",
+			"value": "test@example.com",
+			"type": "string"
+		},
+		{
+			"key": "targetUserId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "resetToken",
+			"value": "sample_reset_token_123",
+			"type": "string"
+		}
+	]
+}
