@@ -16,8 +16,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
-from auth import AuthService, User, TokenBlacklist
-from model import Base
+from auth import AuthService
+from model import Base, User, Wallet, Transaction, TokenBlacklist
 
 # Configure logging
 logging.basicConfig(
@@ -38,9 +38,6 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NA
 # Database setup
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Import models from model.py
-from model import Wallet, Transaction
 
 # Create tables
 Base.metadata.create_all(bind=engine)
