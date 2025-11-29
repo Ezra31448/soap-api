@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wallet="wallet.soap">
+  <soap:Body>
+    <wallet:register_user>
+      <wallet:username>testuser123</wallet:username>
+      <wallet:email>testuser123@example.com</wallet:email>
+      <wallet:password>testpassword123</wallet:password>
+    </wallet:register_user>
+  </soap:Body>
+</soap:Envelope>
