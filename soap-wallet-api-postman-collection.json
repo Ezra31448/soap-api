@@ -1,0 +1,325 @@
+{
+  "info": {
+    "name": "SOAP Wallet API with Authentication",
+    "description": "Postman collection for SOAP Wallet API service with JWT authentication and wallet management operations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "register_user"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Body>\n    <wallet:register_user>\n      <wallet:username>{{username}}</wallet:username>\n      <wallet:email>{{email}}</wallet:email>\n      <wallet:password>{{password}}</wallet:password>\n    </wallet:register_user>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Create a new user account with authentication"
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "login_user"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Body>\n    <wallet:login_user>\n      <wallet:username>{{username}}</wallet:username>\n      <wallet:password>{{password}}</wallet:password>\n    </wallet:login_user>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Authenticate user and receive JWT token"
+          }
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "logout_user"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Body>\n    <wallet:logout_user>\n      <wallet:token>{{auth_token}}</wallet:token>\n    </wallet:logout_user>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Revoke JWT token (logout)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wallet Operations (Require Authentication)",
+      "item": [
+        {
+          "name": "Get WSDL",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8001/?wsdl",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "query": [
+                {
+                  "key": "wsdl",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Retrieve the WSDL definition for the SOAP service"
+          }
+        },
+        {
+          "name": "Register Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "register_wallet"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Header>\n    <wallet:token>{{auth_token}}</wallet:token>\n  </soap:Header>\n  <soap:Body>\n    <wallet:register_wallet>\n      <wallet:username>{{username}}</wallet:username>\n      <wallet:email>{{email}}</wallet:email>\n    </wallet:register_wallet>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Create a new wallet for a user (requires authentication)"
+          }
+        },
+        {
+          "name": "Top Up Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "top_up"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Header>\n    <wallet:token>{{auth_token}}</wallet:token>\n  </soap:Header>\n  <soap:Body>\n    <wallet:top_up>\n      <wallet:wallet_uid>{{wallet_uid}}</wallet:wallet_uid>\n      <wallet:amount>{{amount}}</wallet:amount>\n    </wallet:top_up>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Add funds to an existing wallet (requires authentication)"
+          }
+        },
+        {
+          "name": "Make Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "payment"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Header>\n    <wallet:token>{{auth_token}}</wallet:token>\n  </soap:Header>\n  <soap:Body>\n    <wallet:payment>\n      <wallet:wallet_uid>{{wallet_uid}}</wallet:wallet_uid>\n      <wallet:amount>{{amount}}</wallet:amount>\n    </wallet:payment>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Deduct funds from wallet (payment) (requires authentication)"
+          }
+        },
+        {
+          "name": "Get Balance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "get_balance"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wallet=\"wallet.soap\">\n  <soap:Header>\n    <wallet:token>{{auth_token}}</wallet:token>\n  </soap:Header>\n  <soap:Body>\n    <wallet:get_balance>\n      <wallet:wallet_uid>{{wallet_uid}}</wallet:wallet_uid>\n    </wallet:get_balance>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8001",
+              "path": [""]
+            },
+            "description": "Get current wallet balance (requires authentication)"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "username",
+      "value": "testuser",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "test@example.com",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "securepassword123",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "your_jwt_token_here",
+      "type": "string"
+    },
+    {
+      "key": "wallet_uid",
+      "value": "your_wallet_uid_here",
+      "type": "string"
+    },
+    {
+      "key": "amount",
+      "value": "100.00",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script for SOAP API",
+          "console.log('Preparing SOAP request...');"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Test script for SOAP API responses",
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test(\"Response is XML\", function () {",
+          "    pm.response.to.have.header(\"Content-Type\", \"text/xml\");",
+          "});",
+          "",
+          "// Parse XML response",
+          "const responseBody = pm.response.text();",
+          "if (responseBody.includes('soap:Fault')) {",
+          "    console.log(\"SOAP Fault detected\");",
+          "    pm.test(\"SOAP Fault response\", function () {",
+          "        pm.expect(responseBody).to.include('soap:Fault');",
+          "    });",
+          "} else {",
+          "    console.log(\"SOAP Response successful\");",
+          "    pm.test(\"Valid SOAP response\", function () {",
+          "        pm.expect(responseBody).to.include('soap:Envelope');",
+          "    });",
+          "}",
+          "",
+          "// Extract token from login response",
+          "if (pm.request.name === \"Login User\" && !responseBody.includes('soap:Fault')) {",
+          "    const tokenMatch = responseBody.match(/<wallet:token>(.*?)<\\/wallet:token>/);",
+          "    if (tokenMatch && tokenMatch[1]) {",
+          "        const token = tokenMatch[1];",
+          "        pm.collectionVariables.set(\"auth_token\", token);",
+          "        console.log(\"Auth token saved: \" + token.substring(0, 50) + \"...\");",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "auth": null
+}
