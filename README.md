@@ -82,13 +82,13 @@ The API uses JWT (JSON Web Tokens) for authentication. All wallet operations req
 
 - **Algorithm**: HS256
 - **Expiration**: 24 hours
-- **Secret Key**: Configurable via `JWT_SECRET` environment variable
+- **Secret Key**: Configurable via `JWT_SECRET_KEY` environment variable
 
 ## API Endpoints
 
 ### WSDL URL
 ```
-http://localhost:8000/?wsdl
+http://localhost:8001/?wsdl
 ```
 
 ### Authentication Methods (No Auth Required)
@@ -162,7 +162,7 @@ APP_HOST=0.0.0.0
 APP_PORT=8000
 
 # JWT Configuration
-JWT_SECRET=your-secret-key-change-in-production
+JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
 ```
 
 ## Database Schema
@@ -232,11 +232,10 @@ This script will test the complete authentication flow:
 import requests
 
 # WSDL URL
-wsdl_url = "http://localhost:8000/?wsdl"
+wsdl_url = "http://localhost:8001/?wsdl"
 
 # Example SOAP request for register_user
-soap_envelope = """
-<?xml version="1.0" encoding="utf-8"?>
+soap_envelope = """<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wallet="wallet.soap">
   <soap:Body>
     <register_user xmlns="wallet.soap">
@@ -245,15 +244,14 @@ soap_envelope = """
       <password>securepassword123</password>
     </register_user>
   </soap:Body>
-</soap:Envelope>
-"""
+</soap:Envelope>"""
 
 headers = {
     'Content-Type': 'text/xml; charset=utf-8',
     'SOAPAction': 'register_user'
 }
 
-response = requests.post("http://localhost:8000/", data=soap_envelope, headers=headers)
+response = requests.post("http://localhost:8001/", data=soap_envelope, headers=headers)
 print(response.text)
 ```
 
